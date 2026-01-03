@@ -50,6 +50,22 @@
       state: latest
     when: ansible_distribution == "Ubuntu"
 
+  - name: Change email address for admin
+    tags: apache,centos,httpd
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin changed@yahoo.com
+    when: ansible_distribution == "CentOS"
+    register: httpd
+
+  - name: restart httpd (CentOS)
+    tags: apache,centos,httpd
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed
+
   - name: copy default html file to site
     tags: apache,apache2,httpd
     copy:
@@ -59,7 +75,6 @@
       group: vboxuser
       mode: 0644
 
-
   - name: install apache and php for CentOS
     tags: apache,centos,httpd
     dnf:
@@ -67,6 +82,14 @@
         - httpd
         - php
       state: latest
+      enabled: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: start httpd (CentOS)
+    tags: apache,centos,httpd
+    service:
+      name: httpd
+      state: started
     when: ansible_distribution == "CentOS"
 
 - hosts: db_server

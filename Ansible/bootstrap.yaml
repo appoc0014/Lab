@@ -1,0 +1,46 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (CentOS)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: Install Update (Ubuntu)
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: all
+  become: true
+  tasks:
+
+    - name: create bone user
+      tags: always
+      user:
+        name: bone
+        groups: root
+    
+    - name: add key for bone
+      tags: always
+      authorized_key:
+        user: bone
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPWlGDBKB8nXozxLtWp/30oWoZNQ49sLlOXJ4z0bSUQC Ansible Connect"
+
+
+    - name: add sudoers file for bone
+      tags: allways
+      copy:
+        src: sudoer_bone
+        dest: /etc/sudoers.d/bone
+        owner: root
+        group: root
+        mode: 0440
+

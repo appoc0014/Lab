@@ -4,20 +4,29 @@
   become: true
   pre_tasks:
 
-  - name: install updates (CentOS)
+  - name: Update Repo (CentOS)
     tags: always
     dnf:
-      update_only: yes
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "CentOS"
 
-  - name: Install Update (Ubuntu)
+  - name: Update Repo (Ubuntu)
     tags: always
     apt:
-      upgrade: dist
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "Ubuntu"
 
+- hosts: all
+  become: true
+  tasks:
+
+    - name: add key for bone
+      tags: always
+      authorized_key:
+        user: bone
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPWlGDBKB8nXozxLtWp/30oWoZNQ49sLlOXJ4z0bSUQC Ansible Connect"
 
 - hosts: workstations
   become: true

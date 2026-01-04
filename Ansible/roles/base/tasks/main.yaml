@@ -1,0 +1,4 @@
+ - name: add ssh key for bone
+   authorized_key:
+     user: bone
+     key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPWlGDBKB8nXozxLtWp/30oWoZNQ49sLlOXJ4z0bSUQC Ansible Connect"
